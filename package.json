@@ -2,6 +2,7 @@
   "name": "commit",
   "version": "0.0.0",
   "description": "CS 262 Webservice",
+  "main": "server.js",
   "engines": {
     "node": "19.x"
   },
