@@ -71,7 +71,7 @@ function readUserUser(req, res, next) {
 
 // list of notifications function using user id
 function readNotification(req, res, next) {
-  db.many("SELECT * FROM Notif WHERE userID=${id}", req.params)
+  db.any("SELECT * FROM Notif WHERE userID=${id}", req.params)
     .then((data) => {
       returnDataOr404(res, data);
     })
@@ -96,7 +96,10 @@ function readFriendNotifs(req, res, next) {
 
 // returns all of the users friends
 function readUserFriends(req, res, next) {
-  db.many("SELECT UserUser.friendsID FROM UserUser, UserAccount WHERE UserAccount.ID=UserUser.userID AND UserUser.userID=${id}", req.params)
+  db.many(
+    "SELECT UserUser.friendsID FROM UserUser, UserAccount WHERE UserAccount.ID=UserUser.userID AND UserUser.userID=${id}",
+    req.params
+  )
     .then((data) => {
       returnDataOr404(res, data);
     })
