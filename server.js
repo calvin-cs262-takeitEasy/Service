@@ -83,7 +83,7 @@ function readNotification(req, res, next) {
 // user id that returns all of users friends notifs
 function readFriendNotifs(req, res, next) {
   db.many(
-    "SELECT Notif.* FROM Notif, UserUser WHERE Notif.userID=UserUser.friendsID AND UserUser.userID=${id} OR Notif.userID=${id}",
+    "SELECT Notif.*, UserAccount.* FROM Notif, UserUser, UserAccount WHERE Notif.userID=UserUser.friendsID AND UserUser.userID=${id} AND UserAccount.ID = Notif.userID OR Notif.userID=${id}",
     req.params
   )
     .then((data) => {
