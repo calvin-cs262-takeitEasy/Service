@@ -61,10 +61,10 @@ GRANT SELECT ON Comment TO PUBLIC;
 
 -- ChatGPT given records
 INSERT INTO UserAccount (ID, name, username, password, creationDate) VALUES
-  (1, 'alice', 'alice34', 'alice_password', '2023-10-24 10:15:00'),
-  (2, 'bob', 'bob92', 'bob_password', '2023-10-24 11:30:00'),
-  (3, 'charlie', 'charlie21', 'charlie_password', '2023-10-24 12:45:00'),
-  (4, 'david', 'david78', 'david_password', '2023-10-24 13:20:00'),
+  (1, 'keith', 'kvlinden', 'keith_password', '2023-10-24 10:15:00'),
+  (2, 'Brenda VanderLinden', 'brenda.vanderlinden', 'brenda_password', '2023-10-24 11:30:00'),
+  (3, 'Ken Arnold', 'ken', 'ken_password', '2023-10-24 12:45:00'),
+  (4, 'Vic Norman', 'THE_VIC', 'vic_password', '2023-10-24 13:20:00'),
   (5, 'emily', 'emily45', 'emily_password', '2023-10-24 14:55:00'),
   (6, 'frank', 'frank17', 'frank_password', '2023-10-24 15:40:00'),
   (7, 'grace', 'grace53', 'grace_password', '2023-10-24 16:25:00'),
@@ -90,6 +90,7 @@ INSERT INTO UserUser (ID, userID, friendsID, creationDate) VALUES
   (4, 4, 5, '2023-10-24 15:00:00'),
   (5, 5, 3, '2023-10-24 16:00:00'),
   (6, 1, 3, '2023-10-24 12:00:00');
+  (7, 1, 4, '2023-10-24 12:00:00');
 
 INSERT INTO Notif (ID, userID, type, postTime) VALUES
   (1, 3, 'study_fail', '2023-10-24 10:15:00'),
