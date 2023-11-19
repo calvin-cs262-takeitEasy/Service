@@ -1,4 +1,5 @@
-const pgp = require("pg-promise")();
+const pgp = require('pg-promise')();
+
 const db = pgp({
   host: process.env.DB_SERVER,
   port: process.env.DB_PORT,
@@ -6,21 +7,22 @@ const db = pgp({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
 });
-const express = require("express");
+const express = require('express');
+
 const app = express();
 const port = process.env.PORT || 3000;
 const router = express.Router();
 router.use(express.json());
 
-router.get("/", readHelloMessage);
+router.get('/', readHelloMessage);
 
-router.get("/username", readUserAccounts);
-router.get("/username/:id", readUserAccount);
+router.get('/username', readUserAccounts);
+router.get('/username/:id', readUserAccount);
 
-router.get("/friends/:id", readUserUser);
+router.get('/friends/:id', readUserUser);
 
-router.get("/notifications/:id", readNotification);
-router.get("/notifications/friends/:id", readFriendNotifs);
+router.get('/notifications/:id', readNotification);
+router.get('/notifications/friends/:id', readFriendNotifs);
 
 app.use(router);
 app.listen(port, () => console.log(`Listening on port ${port}`));
@@ -34,12 +36,12 @@ function returnDataOr404(res, data) {
 }
 
 function readHelloMessage(req, res) {
-  res.send("Welcome to the Commit Service!");
+  res.send('Welcome to the Commit Service!');
 }
 
 // list all accounts
 function readUserAccounts(req, res, next) {
-  db.many("SELECT * FROM UserAccount")
+  db.many('SELECT * FROM UserAccount')
     .then((data) => {
       res.send(data);
     })
@@ -49,7 +51,7 @@ function readUserAccounts(req, res, next) {
 }
 // show user account using user id
 function readUserAccount(req, res, next) {
-  db.one("SELECT * FROM UserAccount WHERE ID=${id}", req.params)
+  db.one('SELECT * FROM UserAccount WHERE ID=${id}', req.params)
     .then((data) => {
       res.send(data);
     })
@@ -60,7 +62,7 @@ function readUserAccount(req, res, next) {
 
 // list friends of user using user id
 function readUserUser(req, res, next) {
-  db.many("SELECT * FROM UserUser WHERE ID=${id}", req.params)
+  db.many('SELECT * FROM UserUser WHERE ID=${id}', req.params)
     .then((data) => {
       returnDataOr404(res, data);
     })
@@ -71,7 +73,7 @@ function readUserUser(req, res, next) {
 
 // list of notifications function using user id
 function readNotification(req, res, next) {
-  db.any("SELECT * FROM Notif WHERE userID=${id}", req.params)
+  db.any('SELECT * FROM Notif WHERE userID=${id}', req.params)
     .then((data) => {
       returnDataOr404(res, data);
     })
@@ -83,8 +85,8 @@ function readNotification(req, res, next) {
 // user id that returns all of users friends notifs
 function readFriendNotifs(req, res, next) {
   db.many(
-    "SELECT DISTINCT Notif.ID, Notif.type, Notif.posttime, UserAccount.name, UserAccount.username, UserAccount.ID FROM Notif, UserUser, UserAccount WHERE UserUser.userID=${id} AND Notif.userID = UserAccount.ID AND Notif.userID = UserUser.friendsID OR Notif.userID = UserUser.userID AND UserAccount.ID = UserUser.userID AND UserUser.userID=${id} ORDER BY posttime",
-    req.params
+    'SELECT DISTINCT Notif.ID, Notif.type, Notif.posttime, UserAccount.name, UserAccount.username, UserAccount.ID FROM Notif, UserUser, UserAccount WHERE UserUser.userID=${id} AND Notif.userID = UserAccount.ID AND Notif.userID = UserUser.friendsID OR Notif.userID = UserUser.userID AND UserAccount.ID = UserUser.userID AND UserUser.userID=${id} ORDER BY posttime',
+    req.params,
   )
     .then((data) => {
       returnDataOr404(res, data);
@@ -97,8 +99,8 @@ function readFriendNotifs(req, res, next) {
 // returns all of the users friends
 function readUserFriends(req, res, next) {
   db.many(
-    "SELECT UserUser.friendsID FROM UserUser, UserAccount WHERE UserAccount.ID=UserUser.userID AND UserUser.userID=${id}",
-    req.params
+    'SELECT UserUser.friendsID FROM UserUser, UserAccount WHERE UserAccount.ID=UserUser.userID AND UserUser.userID=${id}',
+    req.params,
   )
     .then((data) => {
       returnDataOr404(res, data);
