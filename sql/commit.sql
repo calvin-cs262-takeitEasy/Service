@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS UserAccount;
 -- Create the schema
 CREATE TABLE UserAccount (
     ID integer PRIMARY KEY,
+    emailAddress varchar(50) NOT NULL,  --added for server.js
     username varchar(16) NOT NULL,
     password varchar(32) NOT NULL,
     creationDate TIMESTAMP
