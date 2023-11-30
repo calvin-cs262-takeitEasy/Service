@@ -1,9 +1,13 @@
 {
   "name": "commit",
   "version": "0.0.0",
-  "private": true,
+  "description": "CS 262 Webservice",
+  "main": "server.js",
+  "engines": {
+    "node": "19.x"
+  },
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node server.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -11,6 +15,7 @@
     "ejs": "~2.6.1",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "pg-promise": "^10.12.1"
   }
 }

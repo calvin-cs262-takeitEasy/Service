@@ -1,12 +1,12 @@
-const pgp = require('pg-promise')();
+const pgp = require("pg-promise")();
 const db = pgp({
-    host: process.env.DB_SERVER,
-    port: process.env.DB_PORT,
-    database: process.env.DB_USER,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+  host: process.env.DB_SERVER,
+  port: process.env.DB_PORT,
+  database: process.env.DB_USER,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
 });
-const express = require('express');
+const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 const router = express.Router();
@@ -15,56 +15,66 @@ router.use(express.json());
 router.get("/", readHelloMessage);
 
 //user functions
-router.get("/usernames", readUserAccounts);
-router.get("/users/:id", readUserUser);
 router.put("/usernames/:id", updateUser);
 router.post('/users/:id', createUser);
 router.delete('/users/:id', deleteUser);
-router.get("/users/email/:email", readUserEmail);
 
 //login
 router.post("/login", handleLogin);
 
+router.get("/username", readUserAccounts);
+router.get("/username/:id", readUserAccount);
 
+router.get("/friends/:id", readUserUser);
+
+router.get("/notifications/:id", readNotification);
+router.get("/notifications/friends/:id", readFriendNotifs);
 
 app.use(router);
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 function returnDataOr404(res, data) {
-    if (data == null) {
-        res.sendStatus(404);
-    } else {
-        res.send(data);
-    }
+  if (data == null) {
+    res.sendStatus(404);
+  } else {
+    res.send(data);
+  }
 }
 
 function readHelloMessage(req, res) {
-    res.send('Welcome to the Commit Service!');
+  res.send("Welcome to the Commit Service!");
 }
 
-
-// username function
+// list all accounts
 function readUserAccounts(req, res, next) {
-    db.many("SELECT * FROM UserAccount")
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            next(err);
-        })
+  db.many("SELECT * FROM UserAccount")
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+// show user account using user id
+function readUserAccount(req, res, next) {
+  db.one("SELECT * FROM UserAccount WHERE ID=${id}", req.params)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
-
-
-// friends function
+// list friends of user using user id
 function readUserUser(req, res, next) {
-    db.oneOrNone('SELECT * FROM UserUser WHERE id=${ID}', req.params)
-        .then(data => {
-            returnDataOr404(res, data);
-        })
-        .catch(err => {
-            next(err);
-        })
+  db.many("SELECT * FROM UserUser WHERE ID=${id}", req.params)
+    .then((data) => {
+      returnDataOr404(res, data);
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 //Updating user
 function updateUser(req, res, next) {
@@ -99,24 +109,11 @@ function deleteUser(req, res, next) {
         });
 }
 
-//reads email
-function readUserEmail(req, res, next){
-    const email = req.params.email;
-    db.oneOrNone("SELECT * FROM Users WHERE emailaddress='" + req.params.email + "'", req.params)
-    .then(data => {
-        returnDataOr404(res, data);
-    })
-    .catch(err => {
-        next(err);
-    });
-}
 //login function
 async function handleLogin(req, res) {
-    const { emailAdress, username, password } = req.body;  // email, username, password might be wrong spelling
+    const {  username, password } = req.body;  // username, password might be wrong spelling
 
     try{
-        const user = await db.oneOrNone('SELECT * FROM Users WHERE emailAdress = $1', emailAdress);
-
         if(!user) {
             return res.status(401).json({ message: 'User not found' });
         }
@@ -133,8 +130,46 @@ async function handleLogin(req, res) {
     }
 }
 
+// list of notifications function using user id
+function readNotification(req, res, next) {
+  db.any("SELECT * FROM Notif WHERE userID=${id}", req.params)
+    .then((data) => {
+      returnDataOr404(res, data);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+// user id that returns all of users friends notifs
+function readFriendNotifs(req, res, next) {
+  db.many(
+    "SELECT DISTINCT Notif.ID, Notif.type, Notif.posttime, UserAccount.name, UserAccount.username FROM Notif, UserUser, UserAccount WHERE UserUser.userID=${id} AND Notif.userID = UserAccount.ID AND Notif.userID = UserUser.friendsID OR Notif.userID = UserUser.userID AND UserAccount.ID = UserUser.userID AND UserUser.userID=${id} ORDER BY posttime",
+    req.params
+  )
+    .then((data) => {
+      returnDataOr404(res, data);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
 
 
 // list of notifications function
 
 // user id that includes user id returns all of users friends notifs
+
+// returns all of the users friends
+function readUserFriends(req, res, next) {
+  db.many(
+    "SELECT UserUser.friendsID FROM UserUser, UserAccount WHERE UserAccount.ID=UserUser.userID AND UserUser.userID=${id}",
+    req.params
+  )
+    .then((data) => {
+      returnDataOr404(res, data);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
