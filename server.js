@@ -14,6 +14,14 @@ router.use(express.json());
 
 router.get("/", readHelloMessage);
 
+//user functions
+router.put("/usernames/:id", updateUser);
+router.post('/users/:id', createUser);
+router.delete('/users/:id', deleteUser);
+
+//login
+router.post("/login", handleLogin);
+
 router.get("/username", readUserAccounts);
 router.get("/username/:id", readUserAccount);
 
@@ -68,6 +76,59 @@ function readUserUser(req, res, next) {
       next(err);
     });
 }
+//Updating user
+function updateUser(req, res, next) {
+    db.oneOrNone('UPDATE Users SET email=${body.email}, name=${body.name} WHERE id=${params.id} RETURNING id', req)
+        .then(data => {
+            returnDataOr404(res, data);
+        })
+        .catch(err => {
+            next(err);
+        });
+}
+
+//Create user
+function createUser(req, res, next) {
+    db.one('INSERT INTO Users(name, emailAddress, password, type) VALUES (${name}, ${email}, ${password}, ${type}) RETURNING id', req.body)
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            next(err);
+        });
+}
+
+// Delete user
+function deleteUser(req, res, next) {
+    db.oneOrNone('DELETE FROM Users WHERE id=${id} RETURNING id', req.params)
+        .then(data => {
+            returnDataOr404(res, data);
+        })
+        .catch(err => {
+            next(err);
+        });
+}
+
+//login function
+async function handleLogin(req, res) {
+    const {  username, password } = req.body;  // username, password might be wrong spelling
+
+    try{
+        if(!user) {
+            return res.status(401).json({ message: 'User not found' });
+        }
+
+        if(user.password === pasword) {
+            return res.status(200).json({ message: 'Login approved' });
+        } else {
+            return res.status(200).json({ message: 'Incorrect password' });
+        }
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error occured during login'});
+    }
+}
 
 // list of notifications function using user id
 function readNotification(req, res, next) {
@@ -93,6 +154,11 @@ function readFriendNotifs(req, res, next) {
       next(err);
     });
 }
+
+
+// list of notifications function
+
+// user id that includes user id returns all of users friends notifs
 
 // returns all of the users friends
 function readUserFriends(req, res, next) {
