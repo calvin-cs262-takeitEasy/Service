@@ -62,7 +62,7 @@ GRANT SELECT ON Comment TO PUBLIC;
 -- ChatGPT given records
 INSERT INTO UserAccount (ID, name, username, password, creationDate) VALUES
   (1, 'keith', 'kvlinden', 'keith_password', '2023-10-24 10:15:00'),
-  (2, 'Brenda VanderLinden', 'brenda.vanderlinden', 'brenda_password', '2023-10-24 11:30:00'),
+  (2, 'Brenda VanderLinden', 'brenda.vl', 'brenda_password', '2023-10-24 11:30:00'),
   (3, 'Ken Arnold', 'ken', 'ken_password', '2023-10-24 12:45:00'),
   (4, 'Vic Norman', 'THE_VIC', 'vic_password', '2023-10-24 13:20:00'),
   (5, 'emily', 'emily45', 'emily_password', '2023-10-24 14:55:00'),
