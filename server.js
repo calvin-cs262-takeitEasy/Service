@@ -16,7 +16,7 @@ router.get("/", readHelloMessage);
 
 //user functions
 router.put("/usernames/:id", updateUser); // Updating user
-router.post('/users/:id', createUser); // Create user
+router.post('/users', createUser); // Create user
 router.delete('/users/:id', deleteUser); // Delete user
 
 //login
@@ -79,7 +79,7 @@ function readUserUser(req, res, next) {
 }
 // Updating user
 function updateUser(req, res, next) {
-    db.oneOrNone('UPDATE Users SET email=${body.email}, name=${body.name} WHERE id=${params.id} RETURNING id', req)
+    db.oneOrNone('UPDATE Users SET name=${body.name} WHERE id=${params.id} RETURNING id', req)
         .then(data => {
             returnDataOr404(res, data);
         })
@@ -90,7 +90,7 @@ function updateUser(req, res, next) {
 
 //Create user
 function createUser(req, res, next) {
-    db.one('INSERT INTO Users(name, emailAddress, password, type) VALUES (${name}, ${email}, ${password}, ${type}) RETURNING id', req.body)
+    db.one('INSERT INTO UserAccount(username, password) VALUES (${username}, ${password}) RETURNING ID', req.body)
         .then(data => {
             res.send(data);
         })
