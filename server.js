@@ -15,20 +15,21 @@ router.use(express.json());
 router.get("/", readHelloMessage);
 
 //user functions
-router.put("/usernames/:id", updateUser);
-router.post('/users/:id', createUser);
-router.delete('/users/:id', deleteUser);
+router.put("/usernames/:id", updateUser); // Updating user
+router.post('/users', createUser); // Create user
+router.delete('/users/:id', deleteUser); // Delete user
 
 //login
 router.post("/login", handleLogin);
 
-router.get("/username", readUserAccounts);
-router.get("/username/:id", readUserAccount);
+router.get("/username", readUserAccounts); // list all accounts
+router.get("/username/:id", readUserAccount); // show user account using user id
 
-router.get("/friends/:id", readUserUser);
+router.get("/friends/:id", readUserUser); // list friends of user using user id
+router.post("/friends", createFriend); // Create friend
 
-router.get("/notifications/:id", readNotification);
-router.get("/notifications/friends/:id", readFriendNotifs);
+router.get("/notifications/:id", readNotification); // list of notifications function using user id
+router.get("/notifications/friends/:id", readFriendNotifs); // user id that returns all of users friends' and their notifs
 
 app.use(router);
 app.listen(port, () => console.log(`Listening on port ${port}`));
@@ -68,7 +69,7 @@ function readUserAccount(req, res, next) {
 
 // list friends of user using user id
 function readUserUser(req, res, next) {
-  db.many("SELECT * FROM UserUser WHERE ID=${id}", req.params)
+  db.many("SELECT * FROM UserUser WHERE userID=${id}", req.params)
     .then((data) => {
       returnDataOr404(res, data);
     })
@@ -76,9 +77,9 @@ function readUserUser(req, res, next) {
       next(err);
     });
 }
-//Updating user
+// Updating user
 function updateUser(req, res, next) {
-    db.oneOrNone('UPDATE Users SET email=${body.email}, name=${body.name} WHERE id=${params.id} RETURNING id', req)
+    db.oneOrNone('UPDATE Users SET name=${body.name} WHERE id=${params.id} RETURNING id', req)
         .then(data => {
             returnDataOr404(res, data);
         })
@@ -89,7 +90,18 @@ function updateUser(req, res, next) {
 
 //Create user
 function createUser(req, res, next) {
-    db.one('INSERT INTO Users(name, emailAddress, password, type) VALUES (${name}, ${email}, ${password}, ${type}) RETURNING id', req.body)
+    db.one('INSERT INTO UserAccount(username, password) VALUES (${username}, ${password}) RETURNING ID', req.body)
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            next(err);
+        });
+}
+
+// Create friend
+function createFriend(req, res, next) {
+    db.one('INSERT INTO UserUser(userID, friendsID) VALUES (${userID}, ${friendsID}) RETURNING id', req.body)
         .then(data => {
             res.send(data);
         })
@@ -141,7 +153,7 @@ function readNotification(req, res, next) {
     });
 }
 
-// user id that returns all of users friends notifs
+// user id that returns all of users friends' and their notifs
 function readFriendNotifs(req, res, next) {
   db.many(
     "SELECT DISTINCT Notif.ID, Notif.type, Notif.posttime, UserAccount.name, UserAccount.username FROM Notif, UserUser, UserAccount WHERE UserUser.userID=${id} AND Notif.userID = UserAccount.ID AND Notif.userID = UserUser.friendsID OR Notif.userID = UserUser.userID AND UserAccount.ID = UserUser.userID AND UserUser.userID=${id} ORDER BY posttime",
