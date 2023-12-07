@@ -30,6 +30,7 @@ router.post("/friends", createFriend); // Create friend
 
 router.get("/notifications/:id", readNotification); // list of notifications function using user id
 router.get("/notifications/friends/:id", readFriendNotifs); // user id that returns all of users friends' and their notifs
+router.post("/notifications", createNotification); // Create notification
 
 app.use(router);
 app.listen(port, () => console.log(`Listening on port ${port}`));
@@ -101,7 +102,7 @@ function createUser(req, res, next) {
 
 // Create friend
 function createFriend(req, res, next) {
-    db.one('INSERT INTO UserUser(userID, friendsID) VALUES (${userID}, ${friendsID}) RETURNING id', req.body)
+    db.one('INSERT INTO UserUser(userID, friendsID) VALUES (${userID}, ${friendsID}) RETURNING ID', req.body)
         .then(data => {
             res.send(data);
         })
@@ -184,4 +185,14 @@ function readUserFriends(req, res, next) {
     .catch((err) => {
       next(err);
     });
+}
+// Create notification
+function createNotification (req, res, next) {
+  db.one('INSERT INTO Notif(userID, type) VALUES (${userID}, ${type},) RETURNING ID', req.body)
+      .then(data => {
+          res.send(data);
+      })
+      .catch(err => {
+          next(err);
+      });
 }
