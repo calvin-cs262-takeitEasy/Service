@@ -188,7 +188,7 @@ function readUserFriends(req, res, next) {
 }
 // Create notification
 function createNotification (req, res, next) {
-  db.one('INSERT INTO Notif(userID, type) VALUES (${userID}, ${type},) RETURNING ID', req.body)
+  db.one('INSERT INTO Notif(userID, type) VALUES (${userID}, ${type}) RETURNING ID', req.body)
       .then(data => {
           res.send(data);
       })
