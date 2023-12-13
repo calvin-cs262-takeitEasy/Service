@@ -145,7 +145,7 @@ async function handleLogin(req, res) {
 
 // list of notifications function using user id
 function readNotification(req, res, next) {
-  db.any("SELECT * FROM Notif WHERE userID=${id}", req.params)
+  db.any("SELECT * FROM Notif WHERE userID=${id} ORDER BY ID DESC", req.params)
     .then((data) => {
       returnDataOr404(res, data);
     })
@@ -157,7 +157,7 @@ function readNotification(req, res, next) {
 // user id that returns all of users friends' and their notifs
 function readFriendNotifs(req, res, next) {
   db.many(
-    "SELECT DISTINCT Notif.ID, Notif.type, Notif.posttime, UserAccount.name, UserAccount.username FROM Notif, UserUser, UserAccount WHERE UserUser.userID=${id} AND Notif.userID = UserAccount.ID AND Notif.userID = UserUser.friendsID OR Notif.userID = UserUser.userID AND UserAccount.ID = UserUser.userID AND UserUser.userID=${id} ORDER BY posttime",
+    "SELECT DISTINCT Notif.ID, Notif.type, Notif.posttime, UserAccount.name, UserAccount.username FROM Notif, UserUser, UserAccount WHERE UserUser.userID=${id} AND Notif.userID = UserAccount.ID AND Notif.userID = UserUser.friendsID OR Notif.userID = UserUser.userID AND UserAccount.ID = UserUser.userID AND UserUser.userID=${id} ORDER BY ID DESC",
     req.params
   )
     .then((data) => {
