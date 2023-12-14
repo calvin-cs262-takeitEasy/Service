@@ -1,3 +1,19 @@
+/*
+* This module implements a REST-inspired web service for the Commit application.
+* It uses the Express framework to define routes and handlers for those routes.
+* It uses the pg-promise library to access the PostgreSQL database that is hosted on ElephantSQL.
+* 
+* To guard against SQL injection attacks, this code uses pg-promise's built-in variable escaping.
+* 
+* This service assumes that the database connection strings and the server mode are
+* set in environment variables. See the DB_* variables used by pg-promise. And
+* setting NODE_ENV to production will cause ExpressJS to serve up uninformative
+* server error responses for all errors.
+*
+* @authors: Alex Miller and Jaden Brookens
+* @date: Fall, 2023
+*/
+
 const pgp = require("pg-promise")();
 const db = pgp({
   host: process.env.DB_SERVER,
@@ -167,11 +183,6 @@ function readFriendNotifs(req, res, next) {
       next(err);
     });
 }
-
-
-// list of notifications function
-
-// user id that includes user id returns all of users friends notifs
 
 // returns all of the users friends
 function readUserFriends(req, res, next) {

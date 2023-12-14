@@ -112,7 +112,17 @@ INSERT INTO Notif (userID, type, postTime) VALUES
   (5, 'bedtime_fail', '2023-10-25 02:25:00'),
   (4, 'bedtime_success', '2023-10-25 03:10:00'),
   (2, 'study_fail', '2023-10-25 04:35:00'),
-  (1, 'study_success', '2023-10-25 05:50:00');
+  (1, 'study_success', '2023-10-25 05:50:00'),
+  (1, 'alarm_fail', '2023-10-25 06:15:00'),
+  (3, 'alarm_success', '2023-10-25 07:30:00'),
+  (5, 'bedtime_fail', '2023-10-25 08:45:00'),
+  (4, 'bedtime_success', '2023-10-25 09:20:00'),
+  (2, 'study_fail', '2023-10-25 10:35:00'),
+  (1, 'study_success', '2023-10-25 11:50:00'),
+  (3, 'alarm_fail', '2023-10-25 12:15:00'),
+  (5, 'alarm_success', '2023-10-25 13:30:00'),
+  (4, 'bedtime_fail', '2023-10-25 14:55:00'),
+  (2, 'bedtime_success', '2023-10-25 15:40:00');
 
 --   INSERT INTO Comment (ID, userID, notificationID, commentText, postTime) VALUES
 --   (1, 1, 'message', '2023-10-24 16:00:00'),
